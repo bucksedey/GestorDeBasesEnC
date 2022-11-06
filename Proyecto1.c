@@ -307,15 +307,17 @@ void Borrar()
 {
     cliente c;
     FILE *fp, *fp1;
-     
        
     int id,Encontrado=0;
     
     printf("\t\t\t\t======BORRAR REGISTRO DE CLIENTE=======\n\n\n");
     fp=fopen("Clientes.txt","r");
     fp1=fopen("temp.txt","w");
+
     printf("\t\t\t\tIntroduce el id del cliente : ");
+    fflush(stdin);
     scanf("%d",&id);
+    
     if(fp==NULL){
         fprintf(stderr,"No se puede abrir el archivo\n");
         exit(0);
