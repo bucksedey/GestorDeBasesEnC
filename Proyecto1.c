@@ -20,6 +20,15 @@ typedef struct cliente
     double Deuda;
 }cliente;
 
+int ValidarFecha(int AAAA, int MM, int DD);
+int ValidarID(int id);
+void Crear();
+void Desplegar();
+void Buscar();
+void BuscarNombre();
+void Borrar();
+void Modificar();
+
 int ValidarFecha(int AAAA, int MM, int DD)
 {
     //Verificar año
@@ -177,41 +186,49 @@ void Desplegar()
                 switch (op)
                 {
                 case 1:
+                    printf("\t\t\t\t=======ID Clientes=======\n");
                     while(fread(&c,sizeof(cliente),1,fp))
                         printf("\n\t\t\t\t ID            : %d",c.idCliente);
                             fclose(fp);
                     break;
                 case 2:
+                    printf("\t\t\t\t=======Nombres Clientes=======\n");
                     while(fread(&c,sizeof(cliente),1,fp))
                         printf("\n\t\t\t\t Nombre        : %s",c.Nombre);
                             fclose(fp);
                     break;
                 case 3:
+                    printf("\t\t\t\t=======Apellido Paterno Clientes=======\n");
                     while(fread(&c,sizeof(cliente),1,fp))
                         printf("\n\t\t\t\t Ap. Paterno   : %s",c.ApPaterno);
                             fclose(fp);
                     break;
                 case 4:
+                    printf("\t\t\t\t=======Apellido Materno Clientes=======\n");
                     while(fread(&c,sizeof(cliente),1,fp))
                         printf("\n\t\t\t\t Ap. Materno   : %s",c.ApMaterno);
                             fclose(fp);
                     break;
                 case 5:
+                    printf("\t\t\t\t=======Fecha De Registro Clientes=======\n");
                     while(fread(&c,sizeof(cliente),1,fp))
                         printf("\n\t\t\t\t Fecha registro: %d/%d/%d",c.date.AAAA,c.date.MM,c.date.DD);
                             fclose(fp);
                     break;
                 case 6:
+                    printf("\t\t\t\t=======Credito Clientes=======\n");
                     while(fread(&c,sizeof(cliente),1,fp))
                         printf("\n\t\t\t\t Credito       : %lf",c.Credito);
                             fclose(fp);
                     break;
                 case 7:
+                    printf("\t\t\t\t=======Deuda Clientes=======\n");
                     while(fread(&c,sizeof(cliente),1,fp))
                         printf("\n\t\t\t\t Deuda         : %lf",c.Deuda);
                             fclose(fp);
                     break;
                 case 8:
+                    printf("\t\t\t\t=======Registro Clientes=======\n");
                     while(fread(&c,sizeof(cliente),1,fp))
                     {
                         printf("\n\t\t\t\t Nombre        : %s",c.Nombre);
@@ -308,7 +325,7 @@ void Borrar()
     cliente c;
     FILE *fp, *fp1;
        
-    int id,Encontrado=0;
+    int ID,Encontrado=0;
     
     printf("\t\t\t\t======BORRAR REGISTRO DE CLIENTE=======\n\n\n");
     fp=fopen("Clientes.txt","r");
@@ -316,7 +333,7 @@ void Borrar()
 
     printf("\t\t\t\tIntroduce el id del cliente : ");
     fflush(stdin);
-    scanf("%d",&id);
+    scanf("%d",&ID);
     
     if(fp==NULL){
         fprintf(stderr,"No se puede abrir el archivo\n");
@@ -325,23 +342,28 @@ void Borrar()
     
     while(fread(&c,sizeof(cliente),1,fp))
     {
-        if(c.idCliente == id)
+        if(c.idCliente == ID)
             Encontrado=1;
         else
            fwrite(&c,sizeof(cliente),1,fp1);
     }
     fclose(fp);
     fclose(fp1);
-
-    if(!Encontrado)
-        printf("\n\t\t\t\tRegistro no encontrado\n");
     
     if(Encontrado)
     { 
-        remove("Clientes.txt");
-        rename("temp.txt","Clientes.txt");
+        fp1 = fopen("temp.txt","r");
+        fp = fopen("Clientes.txt","w");
+        
+        while (fread(&c,sizeof(cliente),1,fp1))
+        {
+            fwrite(&c,sizeof(cliente),1,fp);
+        }
         
         printf("\n\t\t\t\tRegistro borrado satisfactoriamente\n");
+
+        fclose(fp);
+        fclose(fp1);
     }
 }
 
