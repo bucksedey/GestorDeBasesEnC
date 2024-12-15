@@ -1,3 +1,19 @@
+/* 
+    Este programa es un sistema de gestión de clientes que permite realizar diversas operaciones sobre un archivo
+    que almacena la información de los clientes. El sistema utiliza estructuras (structs) para almacenar los datos 
+    de cada cliente, como su id, nombre, apellidos, fecha de registro, crédito y deuda. 
+    Las principales funcionalidades incluyen:
+
+    1. Crear y agregar registros de clientes al archivo.
+    2. Desplegar los registros con opciones para mostrar información específica.
+    3. Buscar registros por ID o nombre del cliente.
+    4. Borrar un registro de cliente.
+    5. Modificar un registro existente.
+
+    El programa también incluye funciones de validación para verificar la entrada de datos, como la validez de fechas,
+    ID, crédito y deuda. Los datos se almacenan en un archivo binario y se manipulan usando operaciones de lectura y escritura.
+*/
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -22,12 +38,15 @@ typedef struct cliente
 
 int ValidarFecha(int AAAA, int MM, int DD);
 int ValidarID(int id);
+int ValidarCredito(double credito);
+int ValidarDeuda(double deuda);
 void Crear();
 void Desplegar();
 void Buscar();
 void BuscarNombre();
 void Borrar();
 void Modificar();
+
 
 int ValidarFecha(int AAAA, int MM, int DD)
 {
@@ -71,7 +90,7 @@ int ValidarID(int id)
     fp = fopen("Clientes.txt","r");
 
     while(fread(&c,sizeof(cliente),1,fp)>0)
-        if(c.idCliente==id)
+        if(c.idCliente==id || id < 0)
             return 0;
     
     fclose(fp);
@@ -79,12 +98,25 @@ int ValidarID(int id)
   
 }
 
+int ValidarCredito(double credito)
+{
+    if(credito < 0)
+        return 0;
+    return 1;
+}
+
+int ValidarDeuda(double deuda)
+{
+    if(deuda < 0)
+        return 0;
+    return 1;
+}
+
 void Crear()
 {
     cliente c;
     char otro;
     FILE *fp;
-    int n,i;
 
     do{
     printf("\t\t\t\t=======Escribe la informacion del Cliente=======\n\n\n"); 
@@ -103,12 +135,15 @@ void Crear()
         fflush(stdin);
         printf("\nIntroduce el nombre del cliente: ");
         scanf("%s",&c.Nombre);
+
         fflush(stdin);
         printf("\nIntroduce el apellido paterno del cliente: ");
         scanf("%s",&c.ApPaterno);
+
         fflush(stdin);
         printf("\nIntroduce el apellido materno del cliente: ");
         scanf("%s",&c.ApMaterno);
+
         fflush(stdin);
         printf("\nIntroduce la fecha de registro (AAAA/MM/DD): ");
         scanf("%d/%d/%d",&c.date.AAAA,&c.date.MM,&c.date.DD);
@@ -117,19 +152,21 @@ void Crear()
                 printf("\nFecha no valida, adios.\n");
                 break;
             }
+
         fflush(stdin);
         printf("\nIntroduce el credito del cliente: ");
         scanf("%lf",&c.Credito);
-            if(c.Credito < 0)
+            if(!ValidarCredito(c.Credito))
             {
                 printf("\nCredito no valido, adios.\n");
                 break;
             }
         printf("\nCredito valido.");
+        
         fflush(stdin);
         printf("\nIntroduce la deuda del cliente: ");
         scanf("%lf",&c.Deuda);
-            if(c.Deuda < 0)
+            if(!ValidarDeuda(c.Deuda))
             {
                 printf("\nDeuda no valida, adios.\n");
                 break;
@@ -143,7 +180,8 @@ void Crear()
         printf("\t\t\tRegistro guardado satisfactoriamente.");
 
     
-    fwrite(&c, sizeof(cliente),1,fp);
+    fwrite(&c, sizeof(cliente), 1, fp); 
+
     fclose(fp);
 
     printf("\n\t\t\tQuieres agregar otro registro? (s/n): ");
@@ -187,7 +225,7 @@ void Desplegar()
                 {
                 case 1:
                     printf("\t\t\t\t=======ID Clientes=======\n");
-                    while(fread(&c,sizeof(cliente),1,fp))
+                    while(fread(&c,sizeof(cliente),1,fp)) 
                         printf("\n\t\t\t\t ID            : %d",c.idCliente);
                             fclose(fp);
                     break;
@@ -444,7 +482,7 @@ void Modificar()
                     fflush(stdin);
                     printf("\nIntroduce el nuevo credito del cliente: ");
                     scanf("%lf",&c.Credito);
-                        if(c.Credito < 0)
+                        if(!ValidarCredito(c.Credito))
                         {
                             printf("\nCredito no valido, adios.\n");
                             break;
@@ -455,7 +493,7 @@ void Modificar()
                     fflush(stdin);
                     printf("\nIntroduce la nueva deuda del cliente: ");
                     scanf("%lf",&c.Deuda);
-                        if(c.Deuda < 0)
+                        if(!ValidarDeuda(c.Deuda))
                         {
                             printf("\nDeuda no valida, adios.\n");
                             break;
